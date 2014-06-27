@@ -1,0 +1,46 @@
+name:                lens-sop
+version:             0.1.0.0
+license-file:        LICENSE
+author:              Edsko de Vries, Andres Löh
+maintainer:          edsko@well-typed.com
+category:            Generics
+build-type:          Simple
+cabal-version:       >=1.10
+tested-with:         GHC == 7.6.3, GHC == 7.8.2
+
+
+library
+  exposed-modules:     Generics.SOP.Lens
+                       Generics.SOP.Lens.Named
+                       Generics.SOP.Lens.Computed
+  build-depends:       base                 >= 4.6  && < 5,
+                       generics-sop         >= 0.1  && < 2,
+                       fclabels             >= 2.0  && < 2.1,
+                       transformers         >= 0.3  && < 0.4
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+  ghc-options:         -Wall
+  default-extensions:  ScopedTypeVariables
+                       TypeFamilies
+                       RankNTypes
+                       TypeOperators
+                       GADTs
+                       ConstraintKinds
+                       MultiParamTypeClasses
+                       TypeSynonymInstances
+                       FlexibleInstances
+                       FlexibleContexts
+                       DeriveFunctor
+                       DeriveFoldable
+                       DeriveTraversable
+                       DefaultSignatures
+                       KindSignatures
+                       DataKinds
+                       FunctionalDependencies
+                       AutoDeriveTypeable
+  other-extensions:    OverloadedStrings
+                       OverlappingInstances
+                       PolyKinds
+                       UndecidableInstances
+                       TemplateHaskell
+                       CPP
