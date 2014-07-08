@@ -28,7 +28,6 @@ import Control.Category
 import Control.Monad
 import Data.Functor.Identity
 import Data.Maybe (catMaybes)
-import Data.Proxy
 
 import Generics.SOP
 import Generics.SOP.Lens (GLens)
