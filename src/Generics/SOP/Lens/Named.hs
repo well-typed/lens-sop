@@ -67,6 +67,7 @@ fieldNames _ _ = error "inaccesible"
 
 fieldNames' :: (FieldName -> LensName) -> ConstructorInfo xs -> [String]
 fieldNames' _      (Constructor _)    = error "not a record type"
+fieldNames' _      (Infix _ _ _)      = error "not a record type"
 fieldNames' mkName (Record      _ fs) = hcollapse $ hliftA aux fs
   where
     aux :: FieldInfo a -> K String a

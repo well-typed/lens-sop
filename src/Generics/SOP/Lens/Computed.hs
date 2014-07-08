@@ -214,6 +214,8 @@ glens'' :: forall r w c xs.
         -> Either String (AbstractLens r w c (NP I xs))
 glens'' _ _ _ _ (Constructor _) =
     Left $ "Cannot compute lenses for non-record types"
+glens'' _ _ _ _ (Infix _ _ _) =
+    Left $ "Cannot compute lenses for non-record types"
 glens'' opts ps d p (Record _ fs) =
     case matchingLenses of
       []  -> Left $ "Unknown field " ++ show p ++ " of datatype " ++ show d
