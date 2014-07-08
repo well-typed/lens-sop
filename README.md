@@ -10,6 +10,6 @@ given (string-based) path specification.
 
 This is the development repository. For releases, look on [Hackage][2].
 
-[0]: https://hackage.haskell.org/packages/fclabels
+[0]: https://hackage.haskell.org/package/fclabels
 [1]: https://github.com/well-typed/generics-sop 
-[2]: https://hackage.haskell.org/packages/lens-sop
+[2]: https://hackage.haskell.org/package/lens-sop
