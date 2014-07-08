@@ -1,6 +1,18 @@
 name:                lens-sop
 version:             0.1.0.0
 synopsis:            Computing lenses generically using generics-sop
+description:
+  This library contains a definition of generalized lenses that are built
+  on top of the @<https://hackage.haskell.org/fclabels fclabels>@ package.
+  .
+  It also contains SOP-style generic functions (based on the
+  @<https://hackage.haskell.org/generics-sop generics-sop>@ package) that
+  compute lenses for a given record type. Generalized lenses for the
+  SOP representation types are also provided.
+  .
+  Furthermore, a generic function is provided that computes a lens from
+  a given (string-based) path specification.
+  .
 license:             BSD3
 license-file:        LICENSE
 author:              Edsko de Vries <edsko@well-typed.com>, Andres Löh <andres@well-typed.com>
