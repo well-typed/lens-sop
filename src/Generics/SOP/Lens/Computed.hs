@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances, OverlappingInstances #-}
 module Generics.SOP.Lens.Computed (
     -- * Abstract lenses
     AbstractLens(..)

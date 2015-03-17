@@ -1,5 +1,5 @@
 name:                lens-sop
-version:             0.1.0.2
+version:             0.1.0.3
 synopsis:            Computing lenses generically using generics-sop
 description:
   This library contains a definition of generalized lenses that are built
@@ -56,8 +56,3 @@ library
                        FunctionalDependencies
   if impl (ghc >= 7.8)
     default-extensions:  AutoDeriveTypeable
-  other-extensions:    OverloadedStrings
-                       OverlappingInstances
-                       PolyKinds
-                       UndecidableInstances
-                       CPP
