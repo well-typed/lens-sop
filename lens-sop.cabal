@@ -1,5 +1,5 @@
 name:                lens-sop
-version:             0.1.0.3
+version:             0.1.0.4
 synopsis:            Computing lenses generically using generics-sop
 description:
   This library contains a definition of generalized lenses that are built
@@ -20,7 +20,7 @@ maintainer:          andres@well-typed.com
 category:            Generics
 build-type:          Simple
 cabal-version:       >=1.10
-tested-with:         GHC == 7.6.3, GHC == 7.8.2
+tested-with:         GHC == 7.6.3, GHC == 7.8.4
 
 source-repository head
   type:                git
@@ -31,7 +31,7 @@ library
                        Generics.SOP.Lens.Named
                        Generics.SOP.Lens.Computed
   build-depends:       base                 >= 4.6  && < 5,
-                       generics-sop         >= 0.1  && < 0.2,
+                       generics-sop         >= 0.1  && < 0.3,
                        fclabels             >= 2.0  && < 2.1,
                        transformers         >= 0.3  && < 0.5
   hs-source-dirs:      src
