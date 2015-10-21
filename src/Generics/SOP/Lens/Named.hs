@@ -46,9 +46,10 @@ set (NamedLens l) f b = GLens.set l (f, b)
 gnamedLenses :: forall a ctxt xs. (Generic a, HasDatatypeInfo a, Code a ~ '[xs], All ctxt xs)
              => (DatatypeName -> ConstructorName -> LensName)
              -> [(String, NamedLens a ctxt)]
-gnamedLenses mkName = case sing :: Sing (Code a) of
+gnamedLenses mkName = case sList :: SList (Code a) of
     SCons -> zip (fieldNames mkName (datatypeInfo pa))
                  (hcollapse $ hcliftA pc (K . NamedLens) totalLenses)
+    _     -> error "inaccessible"
   where
     totalLenses :: NP (GLens (->) (->) a) xs
     totalLenses = GLens.glenses

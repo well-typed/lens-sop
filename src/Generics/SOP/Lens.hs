@@ -3,6 +3,7 @@
 -- Intended to be imported qualified
 --
 -- > import Generics.SOP.Lens as GLens
+--
 module Generics.SOP.Lens (
     -- * Generalized lenses
     GLens
@@ -78,15 +79,16 @@ toLens (GLens f g) = Lens.lens f g
 -------------------------------------------------------------------------------}
 
 glenses :: forall r w a xs. (Generic a, Code a ~ '[xs], Arrow r, ArrowApply w) => NP (GLens r w a) xs
-glenses = case sing :: Sing (Code a) of
+glenses = case sList :: SList (Code a) of
             SCons -> hliftA (\l -> l . sop . rep) np
+            _     -> error "inaccessible"
 
 {-------------------------------------------------------------------------------
   Generalized lenses for representation types
 -------------------------------------------------------------------------------}
 
-np :: forall r w xs. (Arrow r, ArrowApply w, SingI xs) => NP (GLens r w (NP I xs)) xs
-np = case sing :: Sing xs of
+np :: forall r w xs. (Arrow r, ArrowApply w, SListI xs) => NP (GLens r w (NP I xs)) xs
+np = case sList :: SList xs of
       SNil  -> Nil
       SCons -> i . head :* hliftA (. tail) np
 
