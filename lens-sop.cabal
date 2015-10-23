@@ -1,5 +1,5 @@
 name:                lens-sop
-version:             0.1.0.4
+version:             0.2.0.0
 synopsis:            Computing lenses generically using generics-sop
 description:
   This library contains a definition of generalized lenses that are built
