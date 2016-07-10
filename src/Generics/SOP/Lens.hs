@@ -81,7 +81,9 @@ toLens (GLens f g) = Lens.lens f g
 glenses :: forall r w a xs. (Generic a, Code a ~ '[xs], Arrow r, ArrowApply w) => NP (GLens r w a) xs
 glenses = case sList :: SList (Code a) of
             SCons -> hliftA (\l -> l . sop . rep) np
+#if __GLASGOW_HASKELL__ < 800
             _     -> error "inaccessible"
+#endif
 
 {-------------------------------------------------------------------------------
   Generalized lenses for representation types

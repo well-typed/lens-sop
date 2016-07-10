@@ -49,7 +49,9 @@ gnamedLenses :: forall a ctxt xs. (Generic a, HasDatatypeInfo a, Code a ~ '[xs],
 gnamedLenses mkName = case sList :: SList (Code a) of
     SCons -> zip (fieldNames mkName (datatypeInfo pa))
                  (hcollapse $ hcliftA pc (K . NamedLens) totalLenses)
+#if __GLASGOW_HASKELL__ < 800
     _     -> error "inaccessible"
+#endif
   where
     totalLenses :: NP (GLens (->) (->) a) xs
     totalLenses = GLens.glenses
@@ -64,7 +66,9 @@ fieldNames :: (DatatypeName -> FieldName -> LensName)
            -> DatatypeInfo '[xs] -> [String]
 fieldNames mkName (ADT     _ n (c :* Nil)) = fieldNames' (mkName n) c
 fieldNames mkName (Newtype _ n  c        ) = fieldNames' (mkName n) c
+#if __GLASGOW_HASKELL__ < 800
 fieldNames _ _ = error "inaccesible"
+#endif
 
 fieldNames' :: (FieldName -> LensName) -> ConstructorInfo xs -> [String]
 fieldNames' _      (Constructor _)    = error "not a record type"

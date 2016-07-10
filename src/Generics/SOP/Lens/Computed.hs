@@ -199,7 +199,9 @@ glens' :: ( ArrowApply r
        -> Either String (AbstractLens r w c (NP I xs))
 glens' opts p ps (ADT     _ n (c :* Nil)) = glens'' opts ps n p c
 glens' opts p ps (Newtype _ n c)          = glens'' opts ps n p c
+#if __GLASGOW_HASKELL__ < 800
 glens' _    _ _  _                        = error "inaccessible"
+#endif
 
 glens'' :: forall r w c xs.
            ( ArrowApply r
