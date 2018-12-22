@@ -30,7 +30,7 @@ library
   exposed-modules:     Generics.SOP.Lens
                        Generics.SOP.Lens.Named
                        Generics.SOP.Lens.Computed
-                       Generics.SOP.Prism
+                       Generics.SOP.Traversal
   build-depends:       base                 >= 4.6  && < 5,
                        generics-sop         >= 0.2  && < 0.5,
                        fclabels             >= 2.0  && < 2.1,
