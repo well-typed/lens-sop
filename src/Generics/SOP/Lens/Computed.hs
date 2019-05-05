@@ -197,11 +197,8 @@ glens' :: ( ArrowApply r
        => LensOptions -> String -> Path
        -> DatatypeInfo '[xs]
        -> Either String (AbstractLens r w c (NP I xs))
-glens' opts p ps (ADT     _ n (c :* Nil)) = glens'' opts ps n p c
-glens' opts p ps (Newtype _ n c)          = glens'' opts ps n p c
-#if __GLASGOW_HASKELL__ < 800
-glens' _    _ _  _                        = error "inaccessible"
-#endif
+glens' opts p ps d =
+  glens'' opts ps (datatypeName d) p (hd (constructorInfo d))
 
 glens'' :: forall r w c xs.
            ( ArrowApply r

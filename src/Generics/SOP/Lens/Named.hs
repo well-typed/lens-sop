@@ -64,11 +64,8 @@ gnamedLenses mkName = case sList :: SList (Code a) of
 
 fieldNames :: (DatatypeName -> FieldName -> LensName)
            -> DatatypeInfo '[xs] -> [String]
-fieldNames mkName (ADT     _ n (c :* Nil)) = fieldNames' (mkName n) c
-fieldNames mkName (Newtype _ n  c        ) = fieldNames' (mkName n) c
-#if __GLASGOW_HASKELL__ < 800
-fieldNames _ _ = error "inaccesible"
-#endif
+fieldNames mkName d =
+  fieldNames' (mkName (datatypeName d)) (hd (constructorInfo d))
 
 fieldNames' :: (FieldName -> LensName) -> ConstructorInfo xs -> [String]
 fieldNames' _      (Constructor _)    = error "not a record type"
