@@ -22,7 +22,7 @@ module Generics.SOP.Lens.Computed (
   ) where
 
 import Prelude hiding (id, (.))
-import Control.Arrow
+
 import Control.Category
 import Control.Monad
 import Data.Functor.Identity
@@ -30,6 +30,7 @@ import Data.Maybe (catMaybes)
 
 import Generics.SOP
 import Generics.SOP.Lens (GLens)
+
 import qualified Generics.SOP.Lens as GLens
 
 {-------------------------------------------------------------------------------
@@ -44,14 +45,15 @@ data AbstractLens r w c a =
   forall x. c x => AbstractLens (GLens r w a x)
 
 -- | Identity abstract lens
-abstractId :: (ArrowApply r, ArrowApply w, c a) => AbstractLens r w c a
+abstractId :: (Monad r, c a) => AbstractLens r w c a
 abstractId = AbstractLens id
 
 -- | Compose with a pointwise lens on the right
-afterGLens :: (ArrowApply r, ArrowApply w)
-           => AbstractLens r w c   a -- ^ @a -> x@
-           -> GLens        r w   b a -- ^ @b -> a@
-           -> AbstractLens r w c b   -- ^ @b -> x@
+afterGLens ::
+     Monad r
+  => AbstractLens r w c   a -- ^ @a -> x@
+  -> GLens        r w   b a -- ^ @b -> a@
+  -> AbstractLens r w c b   -- ^ @b -> x@
 afterGLens (AbstractLens l) l' = AbstractLens (l . l')
 
 {-------------------------------------------------------------------------------
@@ -61,37 +63,40 @@ afterGLens (AbstractLens l) l' = AbstractLens (l . l')
 -- | Getter for computed lenses
 --
 -- > get l == runIdentity . getM l . Identity
-get :: Category r => AbstractLens r w c a -> (forall x. c x => r a x -> b) -> b
+get :: AbstractLens r w c a -> (forall x. c x => (a -> r x) -> b) -> b
 get l f = runIdentity $ getM l (Identity . f)
 
 -- | Setter for computed lenses
 --
 -- > set l == runIdentity . setM l . Identity
-set :: Arrow w => AbstractLens r w c a -> (forall x. c x => x) -> w a a
+set :: Monad w => AbstractLens r w c a -> (forall x. c x => x) -> a -> w a
 set l x = runIdentity $ setM l (Identity x)
 
 -- | Modifier for computed lenses
-modify :: Arrow w => AbstractLens r w c a -> (forall x. c x => w x x) -> w a a
+modify :: AbstractLens r w c a -> (forall x. c x => x -> w x) -> a -> w a
 modify l f = runIdentity $ modifyM l (Identity f)
 
 -- | Getter with possibility for "compile time" failure
-getM :: (Monad m, Category r)
-     => AbstractLens r w c a
-     -> (forall x. c x => r a x -> m b)
+getM :: AbstractLens r w c a
+     -> (forall x. c x => (a -> r x) -> m b)
      -> m b
 getM (AbstractLens l) k = k (GLens.get l)
 
 -- | Setter with possibility for "compile time" failure
-setM :: (Monad m, Arrow w)
-     => AbstractLens r w c a -> (forall x. c x => m x) -> m (w a a)
-setM (AbstractLens l) mx =
-  mx >>= \x -> return $ GLens.set l . arr (\a -> (x, a))
+setM ::
+     (Monad w, Functor m)
+  => AbstractLens r w c a
+  -> (forall x. c x => m x)
+  -> m (a -> w a)
+setM (AbstractLens l) x = fmap (GLens.set l) x
 
 -- | Modifier with possibility for "compile time" failure
-modifyM :: (Monad m, Arrow w)
-        => AbstractLens r w c a -> (forall x. c x => m (w x x)) -> m (w a a)
-modifyM (AbstractLens l) mf =
-  mf >>= \f -> return $ GLens.modify l . arr (\a -> (f, a))
+modifyM ::
+     Functor m
+  => AbstractLens r w c a
+  -> (forall x. c x => m (x -> w x))
+  -> m (a -> w a)
+modifyM (AbstractLens l) f = fmap (GLens.modify l) f
 
 {-------------------------------------------------------------------------------
   Paths
@@ -124,17 +129,16 @@ type Path = [String]
 -- However, the lenses returned by the generic computation are pure and total
 -- (as is evident from the type of glens).
 class CLens r w c a where
-  default lens :: ( Generic a
-                  , HasDatatypeInfo a
-                  , ArrowApply r
-                  , ArrowApply w
+  lens :: LensOptions -> Path -> Either String (AbstractLens r w c a)
+
+  default lens :: ( HasDatatypeInfo a
+                  , Monad r
+                  , Monad w
                   , c a
                   , Code a ~ '[xs]
                   , All (CLens r w c) xs
                   )
                => LensOptions -> Path -> Either String (AbstractLens r w c a)
-
-  lens :: LensOptions -> Path -> Either String (AbstractLens r w c a)
   lens = glens
 
 {-------------------------------------------------------------------------------
@@ -151,8 +155,9 @@ class CLens r w c a where
 -- Text, etc.
 --
 -- > instance CLens c Int where lens = emptyPathOnly
-emptyPathOnly :: (ArrowApply r, ArrowApply w, c a)
-              => LensOptions -> Path -> Either String (AbstractLens r w c a)
+emptyPathOnly ::
+     (Monad r, c a)
+  => LensOptions -> Path -> Either String (AbstractLens r w c a)
 emptyPathOnly _ [] = Right $ abstractId
 emptyPathOnly _ _  = Left "Trying to look inside abstract type"
 
@@ -176,9 +181,8 @@ defaultLensOptions = LensOptions {
 -------------------------------------------------------------------------------}
 
 glens :: forall r w a c xs.
-         ( ArrowApply r
-         , ArrowApply w
-         , Generic a
+         ( Monad r
+         , Monad w
          , HasDatatypeInfo a
          , c a
          , Code a ~ '[xs]
@@ -190,8 +194,8 @@ glens opts (p:ps) = liftM (`afterGLens` (GLens.sop . GLens.rep))
                          . glens' opts p ps
                          $ datatypeInfo (Proxy :: Proxy a)
 
-glens' :: ( ArrowApply r
-          , ArrowApply w
+glens' :: ( Monad r
+          , Monad w
           , All (CLens r w c) xs
           )
        => LensOptions -> String -> Path
@@ -201,8 +205,8 @@ glens' opts p ps d =
   glens'' opts ps (datatypeName d) p (hd (constructorInfo d))
 
 glens'' :: forall r w c xs.
-           ( ArrowApply r
-           , ArrowApply w
+           ( Monad r
+           , Monad w
            , All (CLens r w c) xs
            )
         => LensOptions -> Path

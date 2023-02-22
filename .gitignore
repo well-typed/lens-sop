@@ -3,3 +3,5 @@
 *.swo
 *.hi
 *.o
+.envrc
+dist-newstyle
