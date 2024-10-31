@@ -19,7 +19,12 @@ category:            Generics
 build-type:          Simple
 cabal-version:       >=1.10
 extra-source-files:  CHANGELOG.md
-tested-with:         GHC ==8.10.7 || ==9.0.2 || ==9.2.5 || ==9.4.4 || ==9.6.3 || ==9.8.1
+tested-with:         GHC==8.10.7
+                   , GHC==9.2.8
+                   , GHC==9.4.8
+                   , GHC==9.6.6
+                   , GHC==9.8.2
+                   , GHC==9.10.1
 
 source-repository head
   type:                git
@@ -29,7 +34,7 @@ library
   exposed-modules:     Generics.SOP.Lens
                        Generics.SOP.Lens.Named
                        Generics.SOP.Lens.Computed
-  build-depends:       base          >= 4.14  && < 4.20,
+  build-depends:       base          >= 4.14  && < 4.21,
                        generics-sop  >= 0.2.3 && < 0.6,
                        optics-core   >= 0.4   && < 0.5,
                        transformers  >= 0.3   && < 0.7
