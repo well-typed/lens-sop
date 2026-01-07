@@ -1,0 +1,13 @@
+packages: .
+
+package lens-sop
+  ghc-options: -Werror
+
+--
+-- necessary for 9.14 as of 2026-01-07
+--
+
+allow-newer: indexed-traversable:base
+
+allow-newer: indexed-traversable:containers
+allow-newer: optics-core:containers
